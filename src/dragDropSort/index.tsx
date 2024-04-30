@@ -45,6 +45,18 @@ const tiles = [
     id: 'bluelearn',
     uri: 'https://bluelearn.in',
   },
+  {
+    id: 'numadic',
+    uri: 'https://numadic.com',
+  },
+  {
+    id: 'boldd',
+    uri: 'https://www.getboldd.com',
+  },
+  {
+    id: 'trailleo',
+    uri: 'https://www.trailleo.com',
+  },
 ];
 
 const Chrome = () => {

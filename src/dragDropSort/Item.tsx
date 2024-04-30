@@ -1,4 +1,4 @@
-import React, {ReactNode} from 'react';
+import React, {ReactNode, RefObject} from 'react';
 import {Dimensions, StyleSheet, View} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
@@ -11,7 +11,9 @@ import {
   getPosition,
 } from './Config';
 import Animated, {
+  AnimatedRef,
   SharedValue,
+  scrollTo,
   setGestureState,
   useAnimatedGestureHandler,
   useAnimatedReaction,
@@ -29,14 +31,16 @@ interface ItemProps {
   children: ReactNode;
   id: string;
   positions: SharedValue<Positions>;
+  scrollviewRef: AnimatedRef<Animated.ScrollView>;
+  scrollY: SharedValue<number>;
 }
 
-const Item = ({children, positions, id}: ItemProps) => {
+const Item = ({children, positions, id, scrollviewRef, scrollY}: ItemProps) => {
   const inset = useSafeAreaInsets();
   const isAnimationActive = useSharedValue(false);
-  // const containerHeight =
-  //   Dimensions.get('window').height - inset.top - inset.bottom;
-  // const contentHeight = (Object.keys(positions.value).length / COL) * SIZE;
+  const containerHeight =
+    Dimensions.get('window').height - inset.top - inset.bottom;
+  const contentHeight = (Object.keys(positions.value).length / COL) * SIZE;
   const p1 = getPosition(positions.value[id]);
   const position = getPosition(getOrder(p1.x, p1.y));
   const translateX = useSharedValue(position.x);
@@ -72,6 +76,24 @@ const Item = ({children, positions, id}: ItemProps) => {
           newPositions[idToSwap] = oldOrder;
           positions.value = newPositions;
         }
+      }
+      const lowerBound = scrollY.value;
+      const upperBound = lowerBound + containerHeight - SIZE;
+      const maxScroll = contentHeight - containerHeight;
+      const scrollLeft = maxScroll - scrollY.value;
+      if (translateY.value < lowerBound) {
+        const diff = Math.min(lowerBound - translateY.value, lowerBound);
+        scrollY.value = scrollY.value - diff;
+        ctx.y = (ctx.y as number) - diff;
+        translateY.value = (ctx.y as number) + translateY.value;
+        scrollTo(scrollviewRef, 0, scrollY.value, false);
+      }
+      if (translateY.value > upperBound) {
+        const diff = Math.min(translateY.value - upperBound, scrollLeft);
+        scrollY.value = scrollY.value + diff;
+        ctx.y = (ctx.y as number) + diff;
+        translateY.value = (ctx.y as number) + translateY.value;
+        scrollTo(scrollviewRef, 0, scrollY.value, false);
       }
     },
     onEnd: () => {
