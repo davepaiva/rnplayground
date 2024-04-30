@@ -1,10 +1,12 @@
-# React Native Playground Setup
+# React Native Playground
 
-Welcome to the React Native Playground! This project is a space I use experimenting with React Native features and libraries. Follow the steps below to set up the project on your local machine.
+Welcome to the React Native Playground! This project is a space I use experimenting with React Native features and libraries.
 
 ## Content:
 
 - Right now the app just contains one screen demonstarting how we can implement scrolling while drag and dropping using react-native-reanimated
+
+# Setup
 
 ## Prerequisites
 
